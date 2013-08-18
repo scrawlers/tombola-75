@@ -19,7 +19,7 @@ var app = module.exports = express();
 app.http().io();
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8080);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -81,7 +81,7 @@ app.get('/winner',auth,routes.winner);
 
 app.io.route('lucky',routes.socket_lucky);
 
-app.listen(3000);
+app.listen(8080);
 
 app.post('/login',
 		passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),

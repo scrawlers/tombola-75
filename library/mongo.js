@@ -1,5 +1,5 @@
 var mongoq = require('mongoq');
-var db = mongoq("mongodb://localhost/bingo");
+var db = mongoq("mongodb://localhost/bingo75");
 var model = exports.db = {
 		ObjectID : mongoq.mongodb.BSONPure.ObjectID,
 		count : function(content,cb){

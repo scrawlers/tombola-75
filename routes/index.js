@@ -386,6 +386,7 @@ module.exports = {
 						if(files.length >= cres.combination.length){
 							console.log(files);
 							cb(null,files);
+							console.log(files);
 						}
 					});
 				}

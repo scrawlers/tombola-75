@@ -13,8 +13,6 @@ passport.use(new LocalStrategy(
 			    content.table = 'users',
 			    content.condition = {username:username,password:password};
 			    mongo.item(content,function(err,result){
-			    	console.log(err);
-			    	console.log(result);
 			        if(err || !result){
 			        	callback({ message: 'Authentication Failed' });
 			        }
@@ -30,13 +28,20 @@ passport.use(new LocalStrategy(
 				content.table = 'grant';
 				content.condition = {role:role};
 				mongo.list(content,function(error,result){
+					console.log("---- permission content -----");
+					console.log(result);
 					if(error){
 						callback({message:"No permission defined"});
 					}
 					else{
 						var permission = {};
+						
 						for(var i in result){
-							permission[result[i].action + "_" + result[i].table + "_" + result[i].process] = true;
+							permission[result[i].role + "_" + result[i].page] = true;
+							console.log("permission");
+							console.log(result);
+							console.log(result[i].role);
+							console.log(result[i].page);
 						}
 						callback(null,permission);
 					}
@@ -92,7 +97,7 @@ passport.deserializeUser(function(_id, done) {
 				else{
 					var permission = {};
 					for(var i in result){
-						permission[result[i].action + "_" + result[i].table + "_" + result[i].process] = true;
+						permission[result[i].role + "_" + result[i].page] = true;
 					}
 					callback(null,permission);
 				}

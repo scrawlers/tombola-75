@@ -418,25 +418,28 @@ module.exports = {
 		}
 
 	},
-        login : function(req,res){
-		console.log(req.path);
+    login : function(req,res){
+		
 		res.render('login');
 	},
 	
+	logout : function(req,res){
+		console.log("logging out..");
+		req.logout();
+		res.redirect('/');
+	},
+	
 	process_login : function (req,res){
-		
 		passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }, function(req,res){
 			res.redirect('/main');
 		});
 	},
 	
 	main : function(req,res){
-		console.log(req);
 		res.render('main');
 	},
 	
 	process_main : function(req,res){
-		console.log(req.params);
 		res.render('main');
 	}
 	

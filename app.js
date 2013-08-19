@@ -38,18 +38,23 @@ app.use(app.router);
 app.locals.basedir = __dirname;
 
 function auth(req, res, next) {
+	  console.log("checking permission content");
+	  console.log(req.user.permission);
 	  if (req.isAuthenticated()) { return next(); }
-	  res.redirect('/');
+	  res.redirect('/login');
 }
 
 function isAllowed(req, res, next) {
 	 var action = req.body.oper || req.query.oper;
-	 var table = req.params.table;
-	 var process = req.params.process;
+	 var role = req.params.role;
+	 var page = req.params.page;
+	 console.log("--- isAllowed ---");
+	 console.log(role);
+	 console.log(page);
 	 if((typeof action == 'undefined')){
 		action = 'view';
 	 }
-	 if(req.user.permission[action+'_'+table+'_'+process]){
+	 if(req.user.permission[role+'_'+page]){
 		 next();
 	 }
 	 else{
@@ -67,7 +72,7 @@ app.get('/print',auth,routes.print);
 app.post('/print',auth,routes.generate);
 
 app.get('/login',routes.login);
-//app.post('/login',routes.process_login);
+app.get('/logout',routes.logout);
 app.get('/main',auth,routes.main);
 app.post('/main',auth,routes.process_main);
 
@@ -86,5 +91,8 @@ app.listen(8080);
 app.post('/login',
 		passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
 		function(req,res){
+			var toauth = {};
+			console.log("-- content of req --");
+			console.log(req.user);
 			res.redirect('/main');
 		});

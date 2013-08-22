@@ -18,7 +18,8 @@ module.exports = {
 			if(!result){
 				result = new Array();
 			}
-			res.render('print',{production:result});
+			//add ,permission:req.user.permission
+			res.render('print',{production:result,permission:req.user.permission});
 		});
 		
 	},
@@ -121,6 +122,7 @@ module.exports = {
 					series :  pad((comid - (qty*5)),6) + " - " + pad(comid,6),
 					prod_date : moment().format("MM/DD/YYYY"),
 					status : "Generated"
+                                        
 				};
 				var content = {};
 				content.table = 'productions';
@@ -146,6 +148,7 @@ module.exports = {
 						record.category = production.category;
 						record.prodid = production.prod_id;
 						record.prod_date = production.prod_date;
+                                                record.prod_time = production.prod_time;
 						var content = {};
 						content.table = 'combination';
 						content.condition = {
@@ -168,7 +171,7 @@ module.exports = {
 			
 		},function(err,result){
 			console.log(result);
-			res.redirect('/print');
+			res.redirect('/print',{permission:req.user.permission});
 		});
 		
 	},
@@ -188,9 +191,25 @@ module.exports = {
 					}
 					cb(null,result);
 				});
+			},
+                       combination : function(cb){
+				var content = {};
+				content.table = "combination";
+				content.condition = {
+                                      sold : true
+                                };
+				
+				db.list(content,function(err,result){
+					if(!result){
+						result = new Array();
+					}
+					cb(null,result);
+				});
 			}
 		},function(err,result){
-			res.render('sold',{production:result.production});
+            console.log(result.combination);
+            //add ,permission:req.user.permission
+			res.render('sold',{production:result.production,combination:result.combination,permission:req.user.permission});
 		});
 	},
 	sold_card : function(req,res){
@@ -211,8 +230,9 @@ module.exports = {
 					content.record = {
 							"$set" : {
 								sold : true,
-								sold_date : moment().format("MM/DD/YYYY")
-							}
+								sold_date : moment().format("MM/DD/YYYY"),
+								sold_time : moment().format("HH:MM:SS"),
+							 }
 					}
 					db.update(content,function(err,result){
 						j++;
@@ -225,7 +245,7 @@ module.exports = {
 				
 			}
 		},function(err,result){
-			res.redirect('/sold');
+			res.redirect('/sold',{permission:req.user.permission});
 		});
 	},
 	verify : function(req,res){
@@ -258,10 +278,8 @@ module.exports = {
 				});
 			}
 		},function(err,result){
-			res.render('verify',{production:result.production,combination:{},winner :result.winner[0]});
+			res.render('verify',{production:result.production,combination:{},winner :result.winner[0],permission:req.user.permission});
 		});
-		
-		
 	},
 	verify_winner : function(req,res){
 		async.auto({
@@ -284,8 +302,7 @@ module.exports = {
 				content.table = "combination";
 				content.condition = {
 						series : Number(req.body.series),
-						sold : true,
-						sold_date : moment().format("MM/DD/YYYY")
+						sold : true
 				};
 				console.log(content);
 				db.list(content,function(err,result){
@@ -308,7 +325,7 @@ module.exports = {
 				});
 			}
 		},function(err,result){
-			res.render('verify',{production:result.production,combination:result.combination[0],winner:result.winner[0]});
+			res.render('verify',{production:result.production,combination:result.combination[0],winner:result.winner[0],permission:req.user.permission});
 		});
 	},	
 	download : function(req,res){
@@ -329,10 +346,9 @@ module.exports = {
 				});
 			}
 		},function(err,result){
-			res.render('download',{production:result.production});
+			// add ,permission:req.user.permission
+			res.render('download',{production:result.production,permission:req.user.permission});
 		});
-		
-		
 	},
 	download_card : function(req,res){
 		
@@ -393,13 +409,13 @@ module.exports = {
 			}]
 		},function(err,result){
 			console.log(result.combination);
-			res.render('download',{production:result.production,files:result.printTofile});
+			res.render('download',{production:result.production,files:result.printTofile,permission:req.user.permission});
 		});
 		
 		
 	},
 	winner : function(req,res){
-		res.render('winner');
+		res.render('winner',{permission:req.user.permission});
 	}
 	,
 	socket_lucky : function(req){
@@ -418,8 +434,7 @@ module.exports = {
 		}
 
 	},
-    login : function(req,res){
-		
+        login : function(req,res){
 		res.render('login');
 	},
 	
@@ -430,13 +445,16 @@ module.exports = {
 	},
 	
 	process_login : function (req,res){
+		
 		passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }, function(req,res){
 			res.redirect('/main');
 		});
 	},
 	
 	main : function(req,res){
-		res.render('main');
+		console.log("---MAIN---");
+		console.log(req.user);
+		res.render('main',{permission:req.user.permission});
 	},
 	
 	process_main : function(req,res){

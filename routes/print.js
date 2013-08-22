@@ -7,7 +7,7 @@ var print = module.exports = function(content,callback){
 	doc.fontSize(32);
 	doc.font('Helvetica-Bold');
 //	doc.font('Tw-Cen-MT-Condensed');
-	doc.image('./routes/Template1.PNG', 0, 0,{width: 615, height: 467});
+	doc.image('./routes/Template3.PNG', 0, 0,{width: 615, height: 467});
 	doc.fontSize(32);
 //Box A
 	doc.text(content[0].box[0],134,30,{width:35,align:'center'});
@@ -113,7 +113,7 @@ var print = module.exports = function(content,callback){
 		.lineTo(5, 468)
 		.dash(5, {space: 10})
 		.fillAndStroke("black");
-	doc.image('./routes/Template1.PNG', 0, 468,{width: 615, height: 465});
+	doc.image('./routes/Template3.PNG', 0, 468,{width: 615, height: 465});
 //	doc.font('Courier-Bold');
 	
 	//Box A
